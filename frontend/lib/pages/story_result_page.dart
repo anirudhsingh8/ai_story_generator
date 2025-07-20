@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:frontend/widgets/responsive_builder.dart';
 
 import '../bloc/story/story_bloc.dart';
 import '../bloc/story/story_event.dart';
 import '../bloc/story/story_state.dart';
 import '../models/story_response.dart';
-import '../theme/app_theme.dart';
 import '../widgets/app_button.dart';
 
 class StoryResultPage extends StatelessWidget {
@@ -19,50 +19,60 @@ class StoryResultPage extends StatelessWidget {
         title: const Text('Your Story'),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Create New Story',
+            onPressed: () {
+              context.read<StoryBloc>().add(ResetStoryForm());
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<StoryBloc, StoryState>(
-        builder: (context, state) {
-          if (state is StoryGenerating) {
-            return _buildLoadingView();
-          } else if (state is StoryGenerated) {
-            return _buildStoryView(context, state.story);
-          } else if (state is StoryError) {
-            return _buildErrorView(context, state.message);
-          }
-
-          return const Center(
-            child: Text('Something went wrong. Please try again.'),
-          );
-        },
+      body: ResponsiveBuilder(
+        maxWidth: 1020,
+        child: BlocBuilder<StoryBloc, StoryState>(
+          builder: (context, state) {
+            return state is StoryGenerating
+                ? _buildLoadingView()
+                : state is StoryGenerated
+                    ? _buildStoryView(context, state.story)
+                    : state is StoryError
+                        ? _buildErrorView(context, state.message)
+                        : _buildErrorView(
+                            context,
+                            "Go back and generate a story first",
+                          );
+          },
+        ),
       ),
     );
   }
 
   Widget _buildLoadingView() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SpinKitWave(
-            color: AppTheme.teal,
+          SpinKitWave(
             size: 50.0,
+            color: Colors.purple,
           ),
-          const SizedBox(height: 24),
-          const Text(
+          SizedBox(height: 24),
+          Text(
             'Creating Your Story',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: AppTheme.lightGrey,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'Please wait while our AI crafts a unique story for you...',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: AppTheme.lightGrey.withOpacity(0.8),
             ),
           ),
         ],
@@ -88,7 +98,6 @@ class StoryResultPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.lightGrey,
               ),
             ),
             const SizedBox(height: 16),
@@ -97,15 +106,13 @@ class StoryResultPage extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
-                color: AppTheme.lightGrey,
               ),
             ),
             const SizedBox(height: 32),
             AppButton(
               text: 'Try Again',
               onPressed: () {
-                context.read<StoryBloc>().add(ResetStoryForm());
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                context.read<StoryBloc>().add(GenerateStory());
               },
               isFullWidth: false,
             ),
@@ -122,7 +129,6 @@ class StoryResultPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
-            color: AppTheme.teal,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -133,7 +139,6 @@ class StoryResultPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.darkNavy,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -141,7 +146,6 @@ class StoryResultPage extends StatelessWidget {
                     story.summary,
                     style: const TextStyle(
                       fontSize: 16,
-                      color: AppTheme.darkNavy,
                     ),
                   ),
                 ],
@@ -154,7 +158,6 @@ class StoryResultPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppTheme.lightGrey,
             ),
           ),
           const SizedBox(height: 16),
@@ -169,59 +172,13 @@ class StoryResultPage extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       height: 1.6,
-                      color: AppTheme.lightGrey,
                     ),
                   ),
-                  if (content.imagePrompt != null) ...[
-                    const SizedBox(height: 8),
-                    Card(
-                      color: AppTheme.darkGrey,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Row(
-                              children: [
-                                Icon(Icons.image,
-                                    color: AppTheme.teal, size: 18),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Image Prompt',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.teal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              content.imagePrompt!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontStyle: FontStyle.italic,
-                                color: AppTheme.lightGrey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             );
           }).toList(),
-          const SizedBox(height: 32),
-          AppButton(
-            text: 'Create Another Story',
-            onPressed: () {
-              context.read<StoryBloc>().add(ResetStoryForm());
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          ),
+          const SizedBox(height: 16),
         ],
       ),
     );

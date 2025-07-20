@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frontend/pages/story_result_page.dart';
 
 import '../bloc/story/story_bloc.dart';
 import '../bloc/story/story_event.dart';
 import '../bloc/story/story_state.dart';
 import '../models/story_request.dart';
-import '../theme/app_theme.dart';
 import '../widgets/app_button.dart';
+import '../widgets/responsive_builder.dart';
 
 class StoryPreviewPage extends StatelessWidget {
   const StoryPreviewPage({super.key});
@@ -20,12 +21,13 @@ class StoryPreviewPage extends StatelessWidget {
       ),
       body: BlocBuilder<StoryBloc, StoryState>(
         builder: (context, state) {
-          if (state is StoryFormValidated) {
-            return _buildPreviewContent(context, state.request);
-          }
-
-          return const Center(
-            child: Text('Something went wrong. Please go back and try again.'),
+          return ResponsiveBuilder(
+            child: state is StoryFormValidated
+                ? _buildPreviewContent(context, state.request)
+                : const Center(
+                    child: Text(
+                        'Something went wrong. Please go back and try again.'),
+                  ),
           );
         },
       ),
@@ -43,7 +45,6 @@ class StoryPreviewPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: AppTheme.lightGrey,
             ),
           ),
           const SizedBox(height: 8),
@@ -51,7 +52,6 @@ class StoryPreviewPage extends StatelessWidget {
             'Please confirm these details before we generate your story.',
             style: TextStyle(
               fontSize: 16,
-              color: AppTheme.lightGrey,
             ),
           ),
           const SizedBox(height: 32),
@@ -101,7 +101,8 @@ class StoryPreviewPage extends StatelessWidget {
                   text: 'Generate Story',
                   onPressed: () {
                     context.read<StoryBloc>().add(GenerateStory());
-                    Navigator.of(context).pushNamed('/result');
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const StoryResultPage()));
                   },
                 ),
               ),
@@ -121,7 +122,7 @@ class StoryPreviewPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            Icon(icon, color: AppTheme.teal, size: 28),
+            Icon(icon, size: 28),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -131,7 +132,6 @@ class StoryPreviewPage extends StatelessWidget {
                     title,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppTheme.lightGrey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -140,7 +140,6 @@ class StoryPreviewPage extends StatelessWidget {
                     content,
                     style: const TextStyle(
                       fontSize: 18,
-                      color: AppTheme.lightGrey,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -160,7 +159,7 @@ class StoryPreviewPage extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.people, color: AppTheme.teal, size: 28),
+            const Icon(Icons.people, size: 28),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -170,7 +169,6 @@ class StoryPreviewPage extends StatelessWidget {
                     'Characters',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppTheme.lightGrey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -180,14 +178,15 @@ class StoryPreviewPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Row(
                               children: [
-                                const Icon(Icons.person,
-                                    size: 16, color: AppTheme.teal),
+                                const Icon(
+                                  Icons.person,
+                                  size: 16,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   name,
                                   style: const TextStyle(
                                     fontSize: 16,
-                                    color: AppTheme.lightGrey,
                                   ),
                                 ),
                               ],

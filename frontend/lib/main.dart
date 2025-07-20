@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import 'bloc/story/story_bloc.dart';
 import 'pages/story_form_page.dart';
-import 'pages/story_preview_page.dart';
-import 'pages/story_result_page.dart';
-import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,16 +24,10 @@ class MyApp extends StatelessWidget {
           create: (context) => StoryBloc(),
         ),
       ],
-      child: MaterialApp(
+      child: const ShadApp.material(
         title: 'AI Story Generator',
-        theme: AppTheme.lightTheme,
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const StoryFormPage(),
-          '/preview': (context) => const StoryPreviewPage(),
-          '/result': (context) => const StoryResultPage(),
-        },
+        home: StoryFormPage(),
       ),
     );
   }

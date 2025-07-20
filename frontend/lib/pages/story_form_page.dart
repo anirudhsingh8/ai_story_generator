@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:frontend/pages/story_preview_page.dart';
 
 import '../bloc/story/story_bloc.dart';
 import '../bloc/story/story_event.dart';
 import '../bloc/story/story_state.dart';
 import '../constants/genre_options.dart';
-import '../theme/app_theme.dart';
 import '../widgets/app_button.dart';
 import '../widgets/character_name_input.dart';
+import '../widgets/responsive_builder.dart';
 
 class StoryFormPage extends StatefulWidget {
   const StoryFormPage({super.key});
@@ -51,32 +52,34 @@ class _StoryFormPageState extends State<StoryFormPage> {
       body: BlocConsumer<StoryBloc, StoryState>(
         listener: (context, state) {
           if (state is StoryFormValidated) {
-            Navigator.of(context).pushNamed('/preview');
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const StoryPreviewPage()));
           } else if (state is StoryError) {
             _showErrorSnackBar(context, state.message);
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildIntroSection(),
-                  const SizedBox(height: 32),
-                  _buildGenreSection(),
-                  const SizedBox(height: 24),
-                  _buildCharactersSection(),
-                  const SizedBox(height: 24),
-                  _buildParagraphsSection(),
-                  const SizedBox(height: 32),
-                  AppButton(
-                    text: 'Preview Story',
-                    onPressed: _submitForm,
-                  ),
-                ],
+          return ResponsiveBuilder(
+            child: SingleChildScrollView(
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildIntroSection(),
+                    const SizedBox(height: 32),
+                    _buildGenreSection(),
+                    const SizedBox(height: 24),
+                    _buildCharactersSection(),
+                    const SizedBox(height: 24),
+                    _buildParagraphsSection(),
+                    const SizedBox(height: 32),
+                    AppButton(
+                      text: 'Preview Story',
+                      onPressed: _submitForm,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -94,7 +97,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: AppTheme.lightGrey,
           ),
         ),
         SizedBox(height: 8),
@@ -102,7 +104,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
           'Fill in the details below to generate a unique story tailored to your preferences.',
           style: TextStyle(
             fontSize: 16,
-            color: AppTheme.lightGrey,
           ),
         ),
       ],
@@ -113,9 +114,8 @@ class _StoryFormPageState extends State<StoryFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Select Genre',
-          style: AppTheme.textTheme.bodyLarge,
         ),
         const SizedBox(height: 12),
         FormBuilderDropdown(
@@ -170,9 +170,8 @@ class _StoryFormPageState extends State<StoryFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Characters',
-          style: AppTheme.textTheme.bodyLarge,
         ),
         const SizedBox(height: 8),
         const Card(
@@ -181,12 +180,11 @@ class _StoryFormPageState extends State<StoryFormPage> {
             padding: EdgeInsets.all(12.0),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: AppTheme.teal),
+                Icon(Icons.info_outline),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'You can specify either the number of characters or provide character names. If both are provided, names will be prioritized.',
-                    style: TextStyle(color: AppTheme.lightGrey),
                   ),
                 ),
               ],
@@ -200,10 +198,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
             hintText: 'Enter a number',
           ),
           keyboardType: TextInputType.number,
-          validator: FormBuilderValidators.compose([
-            FormBuilderValidators.numeric(),
-            FormBuilderValidators.min(1),
-          ]),
           onChanged: (value) {
             if (value != null && value.isNotEmpty) {
               final number = int.tryParse(value);
@@ -236,9 +230,8 @@ class _StoryFormPageState extends State<StoryFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Number of Paragraphs',
-          style: AppTheme.textTheme.bodyLarge,
         ),
         const SizedBox(height: 8),
         FormBuilderSlider(
@@ -255,13 +248,11 @@ class _StoryFormPageState extends State<StoryFormPage> {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.teal,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
                 '${int.tryParse(value)}',
-                style: const TextStyle(
-                    color: AppTheme.darkNavy, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             );
           },

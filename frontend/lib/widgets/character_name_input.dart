@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class CharacterNameInput extends StatefulWidget {
   final List<String> names;
@@ -34,9 +33,8 @@ class _CharacterNameInputState extends State<CharacterNameInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Character Names',
-          style: AppTheme.textTheme.bodyLarge,
         ),
         const SizedBox(height: 8),
         ..._buildNameFields(),
@@ -70,11 +68,9 @@ class _CharacterNameInputState extends State<CharacterNameInput> {
                   });
                 },
                 enabled: widget.enabled,
-                style: AppTheme.textTheme.bodyMedium,
                 decoration: InputDecoration(
                   hintText: 'Character ${index + 1}',
                   filled: true,
-                  fillColor: AppTheme.darkGrey,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class AppTextInput extends StatelessWidget {
   final String label;
@@ -30,7 +29,6 @@ class AppTextInput extends StatelessWidget {
       maxLines: isMultiline ? 5 : 1,
       minLines: isMultiline ? 3 : 1,
       enabled: enabled,
-      style: AppTheme.textTheme.bodyMedium,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,

@@ -8,19 +8,19 @@ part of 'story_request.dart';
 
 StoryRequest _$StoryRequestFromJson(Map<String, dynamic> json) => StoryRequest(
       genre: json['genre'] as String,
-      numberOfCharacters: (json['numberOfCharacters'] as num?)?.toInt(),
-      nameOfCharacters: (json['nameOfCharacters'] as List<dynamic>?)
+      numberOfCharacters: (json['number_of_characters'] as num?)?.toInt(),
+      nameOfCharacters: (json['name_of_characters'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       paragraphs: (json['paragraphs'] as num?)?.toInt() ?? 2,
-      generateImages: json['generateImages'] as bool? ?? false,
+      generateImages: json['generate_images'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$StoryRequestToJson(StoryRequest instance) =>
     <String, dynamic>{
       'genre': instance.genre,
-      'numberOfCharacters': instance.numberOfCharacters,
-      'nameOfCharacters': instance.nameOfCharacters,
+      'number_of_characters': instance.numberOfCharacters,
+      'name_of_characters': instance.nameOfCharacters,
       'paragraphs': instance.paragraphs,
-      'generateImages': instance.generateImages,
+      'generate_images': instance.generateImages,
     };
