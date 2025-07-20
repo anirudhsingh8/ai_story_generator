@@ -7,6 +7,9 @@ router = APIRouter()
 
 @router.post("/generate", status_code=status.HTTP_200_OK)
 def generate_story(request: StoryRequest):
-    service = ContentGenerationService()
-    generated_story = service.generate_story(req=request)
-    return generated_story
+    try:
+        service = ContentGenerationService()
+        generated_story = service.generate_story(req=request)
+        return generated_story
+    except Exception as e:
+        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went wrong! {e}")

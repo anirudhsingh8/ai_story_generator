@@ -28,4 +28,5 @@ class ContentGenerationService():
         })
 
         story_str = self.text_generation_client.generate_text(messages=prompts)
+        
         return StoryResponse.model_validate_json(story_str)
