@@ -24,14 +24,22 @@ class StoryBloc extends Bloc<StoryEvent, StoryState> {
     on<GenerateStory>(_onGenerateStory);
     on<EditStoryForm>(_onEditStoryForm);
     on<ResetStoryForm>(_onResetStoryForm);
+    on<ToggleGenerateImage>(_onToggleGenerateImage);
   }
 
   void _onUpdateGenre(UpdateGenre event, Emitter<StoryState> emit) {
     _genre = event.genre;
   }
 
+  void _onToggleGenerateImage(
+      ToggleGenerateImage event, Emitter<StoryState> emit) {
+    _generateImages = event.generateImage;
+  }
+
   void _onUpdateNumberOfCharacters(
-      UpdateNumberOfCharacters event, Emitter<StoryState> emit) {
+    UpdateNumberOfCharacters event,
+    Emitter<StoryState> emit,
+  ) {
     _numberOfCharacters = event.numberOfCharacters;
   }
 

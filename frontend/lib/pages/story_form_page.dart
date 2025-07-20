@@ -29,6 +29,7 @@ class _StoryFormPageState extends State<StoryFormPage> {
   int? _numberOfCharacters;
   List<String> _characterNames = [];
   bool _isOtherGenre = false;
+  bool generateImage = false;
 
   @override
   void initState() {
@@ -70,6 +71,8 @@ class _StoryFormPageState extends State<StoryFormPage> {
                     _buildCharactersSection(),
                     const SizedBox(height: 24),
                     _buildParagraphsSection(),
+                    const SizedBox(height: 24),
+                    _buildGenerateImageSection(),
                     const SizedBox(height: 32),
                     AppButton(
                       text: 'Preview Story',
@@ -252,6 +255,33 @@ class _StoryFormPageState extends State<StoryFormPage> {
             }
           },
         ),
+      ],
+    );
+  }
+
+  Widget _buildGenerateImageSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ShadCheckbox(
+          value: generateImage,
+          onChanged: (v) {
+            setState(() {
+              generateImage = v;
+              context.read<StoryBloc>().add(ToggleGenerateImage(v));
+            });
+          },
+          label: const Text('Generate images along with the story'),
+        ),
+        if (generateImage) ...[
+          const SizedBox(height: 8),
+          const ShadAlert(
+            icon: Icon(Icons.info_outline),
+            description: Text(
+              'Images will be generated based on the story content. This may take additional time.',
+            ),
+          ),
+        ]
       ],
     );
   }

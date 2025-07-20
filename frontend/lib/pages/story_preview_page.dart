@@ -105,6 +105,12 @@ class StoryPreviewPage extends StatelessWidget {
               content: request.paragraphs.toString(),
               icon: Icons.text_fields,
             ),
+            const SizedBox(height: 16),
+            _buildInfoCard(
+              title: 'Generate Images',
+              content: request.generateImages ? 'Yes' : 'No',
+              icon: Icons.image,
+            ),
           ],
         ),
       ),

@@ -18,6 +18,15 @@ class UpdateGenre extends StoryEvent {
   List<Object> get props => [genre];
 }
 
+// Event for toggling generate image option
+class ToggleGenerateImage extends StoryEvent {
+  final bool generateImage;
+  const ToggleGenerateImage(this.generateImage);
+  
+  @override
+  List<Object> get props => [generateImage];
+}
+
 // Event for updating number of characters
 class UpdateNumberOfCharacters extends StoryEvent {
   final int? numberOfCharacters;
