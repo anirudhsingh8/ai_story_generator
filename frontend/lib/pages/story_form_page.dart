@@ -50,10 +50,9 @@ class _StoryFormPageState extends State<StoryFormPage> {
         centerTitle: true,
       ),
       body: BlocConsumer<StoryBloc, StoryState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is StoryFormValidated) {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const StoryPreviewPage()));
+            await showPreviewDialog(context);
           } else if (state is StoryError) {
             _showErrorSnackBar(context, state.message);
           }

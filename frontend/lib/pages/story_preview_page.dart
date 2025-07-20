@@ -1,13 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/pages/story_result_page.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../bloc/story/story_bloc.dart';
 import '../bloc/story/story_event.dart';
 import '../bloc/story/story_state.dart';
 import '../models/story_request.dart';
-import '../widgets/app_button.dart';
 import '../widgets/responsive_builder.dart';
+
+Future<void> showPreviewDialog(BuildContext context) async {
+  showShadDialog(
+    context: context,
+    builder: (context) => ShadDialog(
+      title: const Text('Review Your Story Settings'),
+      description: const Text(
+        "Please confirm these details before we generate your story.",
+      ),
+      actions: [
+        ShadButton(
+          onPressed: () {
+            context.read<StoryBloc>().add(EditStoryForm());
+            Navigator.pop(context);
+          },
+          child: const Text('Go Back'),
+        ),
+        ShadButton(
+          onPressed: () {
+            Navigator.pop(context);
+            context.read<StoryBloc>().add(GenerateStory());
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const StoryResultPage()));
+          },
+          child: const Text('Generate Story'),
+        )
+      ],
+      child: Container(
+        width: 375,
+        constraints: const BoxConstraints(maxHeight: 500),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: const StoryPreviewPage(),
+      ),
+    ),
+  );
+}
 
 class StoryPreviewPage extends StatelessWidget {
   const StoryPreviewPage({super.key});
@@ -15,10 +51,6 @@ class StoryPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Preview'),
-        centerTitle: true,
-      ),
       body: BlocBuilder<StoryBloc, StoryState>(
         builder: (context, state) {
           return ResponsiveBuilder(
@@ -35,80 +67,41 @@ class StoryPreviewPage extends StatelessWidget {
   }
 
   Widget _buildPreviewContent(BuildContext context, StoryRequest request) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Review Your Story Settings',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Please confirm these details before we generate your story.',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 32),
-          _buildInfoCard(
-            title: 'Genre',
-            content: request.genre,
-            icon: Icons.category,
-          ),
-          const SizedBox(height: 16),
-          if (request.nameOfCharacters != null &&
-              request.nameOfCharacters!.isNotEmpty)
-            _buildCharacterNamesCard(request.nameOfCharacters!)
-          else if (request.numberOfCharacters != null)
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.6,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             _buildInfoCard(
-              title: 'Number of Characters',
-              content: request.numberOfCharacters.toString(),
-              icon: Icons.people,
-            )
-          else
-            _buildInfoCard(
-              title: 'Characters',
-              content: 'Default characters will be used',
-              icon: Icons.people,
+              title: 'Genre',
+              content: request.genre,
+              icon: Icons.category,
             ),
-          const SizedBox(height: 16),
-          _buildInfoCard(
-            title: 'Paragraphs',
-            content: request.paragraphs.toString(),
-            icon: Icons.text_fields,
-          ),
-          const SizedBox(height: 32),
-          Row(
-            children: [
-              Expanded(
-                child: AppButton(
-                  text: 'Go Back',
-                  onPressed: () {
-                    context.read<StoryBloc>().add(EditStoryForm());
-                    Navigator.pop(context);
-                  },
-                  isOutlined: true,
-                ),
+            const SizedBox(height: 16),
+            if (request.nameOfCharacters != null &&
+                request.nameOfCharacters!.isNotEmpty)
+              _buildCharacterNamesCard(request.nameOfCharacters!)
+            else if (request.numberOfCharacters != null)
+              _buildInfoCard(
+                title: 'Number of Characters',
+                content: request.numberOfCharacters.toString(),
+                icon: Icons.people,
+              )
+            else
+              _buildInfoCard(
+                title: 'Characters',
+                content: 'Default characters will be used',
+                icon: Icons.people,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: AppButton(
-                  text: 'Generate Story',
-                  onPressed: () {
-                    context.read<StoryBloc>().add(GenerateStory());
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const StoryResultPage()));
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
+            const SizedBox(height: 16),
+            _buildInfoCard(
+              title: 'Paragraphs',
+              content: request.paragraphs.toString(),
+              icon: Icons.text_fields,
+            ),
+          ],
+        ),
       ),
     );
   }
