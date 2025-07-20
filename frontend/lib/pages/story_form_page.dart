@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:frontend/pages/story_preview_page.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../bloc/story/story_bloc.dart';
 import '../bloc/story/story_event.dart';
@@ -45,10 +46,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Your Story'),
-        centerTitle: true,
-      ),
       body: BlocConsumer<StoryBloc, StoryState>(
         listener: (context, state) async {
           if (state is StoryFormValidated) {
@@ -113,33 +110,29 @@ class _StoryFormPageState extends State<StoryFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Select Genre',
-        ),
+        const Text('Select Genre'),
         const SizedBox(height: 12),
-        FormBuilderDropdown(
-          name: 'genre',
-          decoration: const InputDecoration(
-            hintText: 'Select a genre',
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 180),
+          child: ShadSelect<String>(
+            placeholder: const Text('Select a genre'),
+            options: [
+              ...GenreOptions.predefinedGenres
+                  .map((e) => ShadOption(value: e, child: Text(e))),
+            ],
+            selectedOptionBuilder: (context, value) => Text(value),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  _selectedGenre = value;
+                  _isOtherGenre = value == 'Other';
+                  if (!_isOtherGenre) {
+                    context.read<StoryBloc>().add(UpdateGenre(value));
+                  }
+                });
+              }
+            },
           ),
-          validator: FormBuilderValidators.required(),
-          items: GenreOptions.predefinedGenres.map((genre) {
-            return DropdownMenuItem(
-              value: genre,
-              child: Text(genre),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() {
-                _selectedGenre = value;
-                _isOtherGenre = value == 'Other';
-                if (!_isOtherGenre) {
-                  context.read<StoryBloc>().add(UpdateGenre(value));
-                }
-              });
-            }
-          },
         ),
         if (_isOtherGenre) ...[
           const SizedBox(height: 16),
@@ -173,32 +166,16 @@ class _StoryFormPageState extends State<StoryFormPage> {
           'Characters',
         ),
         const SizedBox(height: 8),
-        const Card(
-          margin: EdgeInsets.only(bottom: 16),
-          child: Padding(
-            padding: EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'You can specify either the number of characters or provide character names. If both are provided, names will be prioritized.',
-                  ),
-                ),
-              ],
-            ),
-          ),
+        const ShadAlert(
+          icon: Icon(Icons.info_outline),
+          description: Text(
+              'You can specify either the number of characters or provide character names. If both are provided, names will be prioritized.'),
         ),
-        FormBuilderTextField(
-          name: 'numberOfCharacters',
-          decoration: const InputDecoration(
-            labelText: 'Number of Characters (Optional)',
-            hintText: 'Enter a number',
-          ),
+        ShadInput(
+          placeholder: const Text('Number of Characters (Optional)'),
           keyboardType: TextInputType.number,
           onChanged: (value) {
-            if (value != null && value.isNotEmpty) {
+            if (value.isNotEmpty) {
               final number = int.tryParse(value);
               setState(() {
                 _numberOfCharacters = number;
@@ -282,10 +259,9 @@ class _StoryFormPageState extends State<StoryFormPage> {
   }
 
   void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red.shade300,
+    ShadToaster.of(context).show(
+      ShadToast.destructive(
+        description: Text(message),
       ),
     );
   }

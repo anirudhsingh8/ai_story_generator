@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
@@ -30,11 +31,11 @@ class AppButton extends StatelessWidget {
         : Text(text);
 
     Widget button = isOutlined
-        ? OutlinedButton(
+        ? ShadButton.outline(
             onPressed: isLoading ? null : onPressed,
             child: buttonContent,
           )
-        : ElevatedButton(
+        : ShadButton(
             onPressed: isLoading ? null : onPressed,
             child: buttonContent,
           );

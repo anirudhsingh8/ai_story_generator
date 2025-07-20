@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const ShadApp.material(
         title: 'AI Story Generator',
+        themeMode: ThemeMode.light,
         debugShowCheckedModeBanner: false,
         home: StoryFormPage(),
       ),

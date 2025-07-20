@@ -54,6 +54,7 @@ class StoryPreviewPage extends StatelessWidget {
       body: BlocBuilder<StoryBloc, StoryState>(
         builder: (context, state) {
           return ResponsiveBuilder(
+            horizontalPadding: 0,
             child: state is StoryFormValidated
                 ? _buildPreviewContent(context, state.request)
                 : const Center(

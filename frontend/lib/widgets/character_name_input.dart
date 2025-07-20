@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class CharacterNameInput extends StatefulWidget {
   final List<String> names;
@@ -39,10 +40,10 @@ class _CharacterNameInputState extends State<CharacterNameInput> {
         const SizedBox(height: 8),
         ..._buildNameFields(),
         if (widget.enabled)
-          TextButton.icon(
+          ShadButton.outline(
             onPressed: _addNameField,
             icon: const Icon(Icons.add),
-            label: const Text('Add Character'),
+            child: const Text('Add Character'),
           ),
       ],
     );
@@ -58,7 +59,7 @@ class _CharacterNameInputState extends State<CharacterNameInput> {
         child: Row(
           children: [
             Expanded(
-              child: TextFormField(
+              child: ShadInput(
                 initialValue: name,
                 onChanged: (value) {
                   setState(() {
@@ -68,20 +69,16 @@ class _CharacterNameInputState extends State<CharacterNameInput> {
                   });
                 },
                 enabled: widget.enabled,
-                decoration: InputDecoration(
-                  hintText: 'Character ${index + 1}',
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+                placeholder: Text('Character ${index + 1}'),
               ),
             ),
             if (widget.enabled && _names.length > 1)
-              IconButton(
-                icon: const Icon(Icons.remove_circle_outline,
-                    color: Colors.redAccent),
+              ShadButton.outline(
+                icon: const Icon(
+                  Icons.remove_circle_outline,
+                  color: Colors.redAccent,
+                ),
+                foregroundColor: Colors.redAccent,
                 onPressed: () => _removeNameField(index),
               ),
           ],
