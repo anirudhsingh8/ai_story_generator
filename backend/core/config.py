@@ -4,7 +4,8 @@ from functools import lru_cache
 class Config:
     deepinfra_base_url: str
     deepinfra_api_key: str
-    model: str
+    text_model: str
+    image_model: str
     text_gen_system_prompt: str = '''
         You are a creative story writer and an image prompt writer, that generates fictional stories alongwith intricate level details of each paragraph in structured JSON format.
 
@@ -51,7 +52,8 @@ class Config:
     def __init__(self):
         self.deepinfra_base_url = os.getenv("DEEPINFRA_BASE_URL")
         self.deepinfra_api_key = os.getenv("DEEPINFRA_API_KEY")
-        self.model = os.getenv("MODEL")
+        self.text_model = os.getenv("TEXT_MODEL")
+        self.image_model = os.getenv("IMAGE_MODEL")
 
 @lru_cache
 def get_config():

@@ -2,12 +2,16 @@ import dotenv
 from .core.config import Config, get_config
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from .endpoints import generate
 
 dotenv.load_dotenv()
 config: Config = get_config()
 
 app = FastAPI()
+
+# Mount static files directory
+app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 
 origins = [
     "http://localhost:8080",

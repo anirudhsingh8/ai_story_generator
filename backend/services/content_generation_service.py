@@ -5,10 +5,10 @@ from ..schemas.story_response import StoryResponse
 from ..utils.get_story_prompt import get_story_prompt
 
 class ContentGenerationService():
-    text_generation_client: DeepInfraLLMClient
+    llm_client: DeepInfraLLMClient
 
     def __init__(self):
-        self.text_generation_client = DeepInfraLLMClient()
+        self.llm_client = DeepInfraLLMClient()
 
 
     def generate_story(self, req: StoryRequest) -> StoryResponse | None:
@@ -27,6 +27,21 @@ class ContentGenerationService():
             "content": get_story_prompt(req),
         })
 
-        story_str = self.text_generation_client.generate_text(messages=prompts)
+        story_str = self.llm_client.generate_text(messages=prompts)
+        model = StoryResponse.model_validate_json(story_str)
+
+        if req.generate_images:
+            for para in model.contents:
+                image_prompt = para.image_prompt
+                if image_prompt:
+                    image_path = self.generate_image(image_prompt)
+                    para.image_path = image_path
         
-        return StoryResponse.model_validate_json(story_str)
+        return model
+    
+    # Generates images using llm_client and returns its locally stored path
+    def generate_image(self, prompt: str) -> str | None:
+        res = self.llm_client.generate_image(prompt=prompt)
+
+        return res
+
