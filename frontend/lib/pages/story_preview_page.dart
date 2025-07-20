@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/pages/story_result_page.dart';
+import 'package:frontend/theme/colors.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../bloc/story/story_bloc.dart';
@@ -13,6 +14,7 @@ Future<void> showPreviewDialog(BuildContext context) async {
   showShadDialog(
     context: context,
     builder: (context) => ShadDialog(
+      backgroundColor: AppColors.background,
       title: const Text('Review Your Story Settings'),
       description: const Text(
         "Please confirm these details before we generate your story.",
@@ -29,7 +31,7 @@ Future<void> showPreviewDialog(BuildContext context) async {
           onPressed: () {
             Navigator.pop(context);
             context.read<StoryBloc>().add(GenerateStory());
-            Navigator.of(context).push(MaterialPageRoute(
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => const StoryResultPage()));
           },
           child: const Text('Generate Story'),
@@ -37,6 +39,7 @@ Future<void> showPreviewDialog(BuildContext context) async {
       ],
       child: Container(
         width: 375,
+        color: AppColors.background,
         constraints: const BoxConstraints(maxHeight: 500),
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: const StoryPreviewPage(),
@@ -51,6 +54,7 @@ class StoryPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: BlocBuilder<StoryBloc, StoryState>(
         builder: (context, state) {
           return ResponsiveBuilder(

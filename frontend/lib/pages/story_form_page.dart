@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:frontend/pages/story_preview_page.dart';
+import 'package:frontend/theme/colors.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../bloc/story/story_bloc.dart';
@@ -22,7 +22,7 @@ class StoryFormPage extends StatefulWidget {
 }
 
 class _StoryFormPageState extends State<StoryFormPage> {
-  final _formKey = GlobalKey<FormBuilderState>();
+  final _formKey = GlobalKey<ShadFormState>();
   final _genreController = TextEditingController();
   final _paragraphsController = TextEditingController(text: '2');
   String _selectedGenre = '';
@@ -46,6 +46,7 @@ class _StoryFormPageState extends State<StoryFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: BlocConsumer<StoryBloc, StoryState>(
         listener: (context, state) async {
           if (state is StoryFormValidated) {
@@ -57,7 +58,7 @@ class _StoryFormPageState extends State<StoryFormPage> {
         builder: (context, state) {
           return ResponsiveBuilder(
             child: SingleChildScrollView(
-              child: FormBuilder(
+              child: ShadForm(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,13 +115,19 @@ class _StoryFormPageState extends State<StoryFormPage> {
         const SizedBox(height: 12),
         ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 180),
-          child: ShadSelect<String>(
+          child: ShadSelectFormField<String>(
             placeholder: const Text('Select a genre'),
             options: [
               ...GenreOptions.predefinedGenres
                   .map((e) => ShadOption(value: e, child: Text(e))),
             ],
             selectedOptionBuilder: (context, value) => Text(value),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a genre';
+              }
+              return null;
+            },
             onChanged: (value) {
               if (value != null) {
                 setState(() {
@@ -136,21 +143,17 @@ class _StoryFormPageState extends State<StoryFormPage> {
         ),
         if (_isOtherGenre) ...[
           const SizedBox(height: 16),
-          FormBuilderTextField(
-            name: 'customGenre',
+          ShadInputFormField(
+            placeholder: const Text('Enter custom genre'),
             controller: _genreController,
-            decoration: const InputDecoration(
-              hintText: 'Enter custom genre',
-              labelText: 'Custom Genre',
-            ),
-            validator: FormBuilderValidators.compose([
-              FormBuilderValidators.required(),
-              FormBuilderValidators.minLength(3),
-            ]),
-            onChanged: (value) {
-              if (value != null && value.isNotEmpty) {
-                context.read<StoryBloc>().add(UpdateGenre(value));
+            validator: (_) {
+              if (_genreController.text.isEmpty) {
+                return 'Please enter a genre';
               }
+              return null;
+            },
+            onChanged: (value) {
+              context.read<StoryBloc>().add(UpdateGenre(value));
             },
           ),
         ],
@@ -171,9 +174,18 @@ class _StoryFormPageState extends State<StoryFormPage> {
           description: Text(
               'You can specify either the number of characters or provide character names. If both are provided, names will be prioritized.'),
         ),
-        ShadInput(
+        ShadInputFormField(
           placeholder: const Text('Number of Characters (Optional)'),
           keyboardType: TextInputType.number,
+          validator: (val) {
+            if (val.isNotEmpty) {
+              final number = int.tryParse(val);
+              if (number == null || number <= 0) {
+                return 'Please enter a valid number';
+              }
+            }
+            return null;
+          },
           onChanged: (value) {
             if (value.isNotEmpty) {
               final number = int.tryParse(value);
