@@ -3,4 +3,4 @@ from typing import Optional
 
 class Content(BaseModel):
     text: str
-    image: Optional[str] = Field(default=None)
+    image_prompt: Optional[str] = Field(default=None)
