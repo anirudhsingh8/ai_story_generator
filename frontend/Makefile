@@ -9,10 +9,6 @@ clean:
 	flutter clean
 	flutter pub get
 
-# Build the app for production
-build:
-	flutter build apk --release
-
 # Generate models from json
 generate_models:
 	flutter pub run build_runner build --delete-conflicting-outputs

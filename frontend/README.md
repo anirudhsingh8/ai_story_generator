@@ -1,16 +1,52 @@
-# frontend
+# AI Story Generator - Frontend
 
-A new Flutter project.
+A Flutter application that provides a user interface for generating and viewing AI-created stories with optional images.
 
-## Getting Started
+## Architecture
 
-This project is a starting point for a Flutter application.
+The frontend follows a BLoC pattern architecture:
 
-A few resources to get you started if this is your first Flutter project:
+- **Models**: Data classes for API requests and responses
+- **Services**: API communication and data fetching
+- **Bloc**: State management for story generation process
+- **Pages**: UI screens for story form input and results display
+- **Widgets**: Reusable UI components
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Environment Variables
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Create a `.env` file in the frontend directory with:
+
+```
+API_BASE_URL=http://localhost:8000
+```
+
+## Setup & Running
+
+1. Install dependencies:
+
+```bash
+cd frontend
+make setup
+```
+
+2. Run code generation for JSON serialization:
+
+```bash
+cd frontend
+make generate_models
+```
+
+3. Run the app:
+
+```bash
+cd frontend
+make run
+```
+
+## Building for Production
+
+```bash
+flutter build web
+```
+
+The compiled app will be available in the `build/web` directory.
