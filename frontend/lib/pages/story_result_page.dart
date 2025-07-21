@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:frontend/pages/story_form_page.dart';
 import 'package:frontend/theme/colors.dart';
+import 'package:frontend/widgets/book_image.dart';
 import 'package:frontend/widgets/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -272,42 +273,87 @@ class StoryResultPage extends StatelessWidget {
 
             // Story content with first letter styled as drop cap
             if (story.contents.isNotEmpty) ...[
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: firstLetter,
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 56,
-                        height: 0.8,
-                        color: const Color(0xFF8E44AD),
-                        fontWeight: FontWeight.bold,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // First paragraph with drop cap
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: firstLetter,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 56,
+                            height: 0.8,
+                            color: const Color(0xFF8E44AD),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: remainingText,
+                          style: GoogleFonts.lora(
+                            fontSize: 18,
+                            height: 1.8,
+                            color: const Color(0xFF2C3E50),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Display image for first paragraph if available
+                  if (story.contents.first.imagePath != null &&
+                      story.contents.first.imagePath!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+                      child: Center(
+                        child: Container(
+                          constraints: const BoxConstraints(
+                            maxWidth: 600,
+                          ),
+                          child: BookImage(
+                            imagePath: story.contents.first.imageUrl,
+                          ),
+                        ),
                       ),
                     ),
-                    TextSpan(
-                      text: remainingText,
-                      style: GoogleFonts.lora(
-                        fontSize: 18,
-                        height: 1.8,
-                        color: const Color(0xFF2C3E50),
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
               const SizedBox(height: 24),
 
-              // Remaining paragraphs
+              // Remaining paragraphs with images
               ...story.contents.skip(1).map((content) {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 24.0),
-                  child: Text(
-                    content.text,
-                    style: GoogleFonts.lora(
-                      fontSize: 18,
-                      height: 1.8,
-                      color: const Color(0xFF2C3E50),
-                    ),
+                  padding: const EdgeInsets.only(bottom: 32.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display image if available
+                      if (content.imagePath != null &&
+                          content.imagePath!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Center(
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                maxWidth: 600,
+                              ),
+                              child: BookImage(
+                                imagePath: content.imageUrl,
+                              ),
+                            ),
+                          ),
+                        ),
+                      // Paragraph text
+                      Text(
+                        content.text,
+                        style: GoogleFonts.lora(
+                          fontSize: 18,
+                          height: 1.8,
+                          color: const Color(0xFF2C3E50),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }).toList(),

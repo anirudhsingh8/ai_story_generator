@@ -37,10 +37,11 @@ class DeepInfraLLMClient():
 
         base64_data = response.data[0].b64_json
         image_data = base64.b64decode(base64_data)
-        output_path = f"backend/static/{get_unique_filename()}.png"
+        file_name = f"{get_unique_filename()}.png"
+        output_path = f"backend/static/{file_name}"
 
         with open(output_path, "wb") as file:
             file.write(image_data)
 
-        return output_path
+        return file_name
 
