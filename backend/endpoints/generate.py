@@ -12,4 +12,4 @@ def generate_story(request: StoryRequest):
         generated_story = service.generate_story(req=request)
         return generated_story
     except Exception as e:
-        return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went wrong! {e}")
+        return {"status" : status.HTTP_500_INTERNAL_SERVER_ERROR, "error": str(e)}
